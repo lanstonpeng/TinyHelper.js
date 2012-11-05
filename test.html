@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    	<style>	
+	    	body{
+	    		background:orange;
+                height:500px;
+                width:900px;
+
+	    	}
+    	</style>
+    </head>
+    <body>
+        <div class="what">There's something here<div id="damn">
+            and still what 
+            </div></div>    
+        <div class="what">There's something here</div>    
+        <div class="what">There's something here</div>    
+    
+        <script>
+    
+    var doc = window.document;
+
+    $ = function(elem){
+        return new temp.init(elem);
+    }
+    $.fn = {};
+    temp = {}
+    temp.init = function(elem){
+        this.el = elem;
+    }
+    temp.init.prototype = $.fn
+
+    $.isFunction = function isFunction(func){
+        return ({}).toString.call(func) === "[object Function]";
+    }
+
+    $.fn.add = function(etype,selector,func){
+      
+        var selector,func,isProxy = true;
+
+        if( $.isFunction(selector) ){
+            func = selector;    
+            isProxy = false;
+        } 
+       
+        var handler = (function(){
+            if(isProxy){
+                return function(e){
+                    if(e.target.webkitMatchesSelector(selector)){
+                       return func.call(e.target,e); 
+                    }
+                }
+            } 
+            else{
+                return function(e){
+                    return func.call(e.target,e); 
+                }     
+            }
+        })();
+        this.el.addEventListener(etype,handler,false);
+    }
+
+    	d=$(document.body);
+    	d.add("click","div#damn",function(e){
+    		console.log(e.target);
+    	})
+        document.body.click();
+        </script>
+    </body>
+</html>
