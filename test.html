@@ -18,8 +18,15 @@
         <div class="what">There's something here</div>    
     
         <script>
-    
-    var doc = window.document;
+            /*
+                dom.on("click",func,false);
+                dom.off("click",func);
+
+            
+            */    
+    var doc = window.document,
+        _id = 1,
+        handlers = [];
 
     $ = function(elem){
         return new temp.init(elem);
@@ -33,6 +40,10 @@
 
     $.isFunction = function isFunction(func){
         return ({}).toString.call(func) === "[object Function]";
+    }
+
+    function makeId(element){
+        return element._id || (element._id = _id ++); 
     }
 
     $.fn.add = function(etype,selector,func){
@@ -58,13 +69,33 @@
                 }     
             }
         })();
+        handler.func = func;
+        handler.type = etype;
+        handler.ID = makeId(this.el);
+
+        handlers.push(handler);
         this.el.addEventListener(etype,handler,false);
     }
 
+    $.fn.remove = function(etype,func){
+        var temp;
+        for(var i = 0 ,len = handlers.length;i<len;i++){
+            temp = handlers[i]
+            if( temp.func == func && temp.type == etype && temp.ID == this.el._id ){
+                console.log("you can remove");
+                this.el.removeEventListener(etype,temp,false);
+            } 
+        } 
+    
+    }
+
     	d=$(document.body);
-    	d.add("click","div#damn",function(e){
+        var h = function(e){
     		console.log(e.target);
-    	})
+    	};
+
+    	d.add("click",h);
+        d.remove("click",h);
         document.body.click();
         </script>
     </body>
